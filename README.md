@@ -1,66 +1,66 @@
-# Leitura do Docker Compose do Airflow
+# Reading the Airflow Docker Compose File
 
-[← Voltar a Docker Compose](https://github.com/joycequoos/Docker_Docker_Compose/blob/main/README.md)
+[← Back to Docker Compose](https://github.com/joycequoos/Docker_Docker_Compose/blob/main/README.md)
 
-Análise passo a passo de um `docker-compose.yml` que define um conjunto de serviços para executar o Apache Airflow com executor Celery, usando PostgreSQL como banco de dados e Redis como backend de mensagens.
+A step-by-step analysis of a `docker-compose.yml` that defines a set of services to run Apache Airflow with the Celery executor, using PostgreSQL as the database and Redis as the message backend.
 
-## Índice
+## Table of Contents
 
-- [Estrutura comum](#estrutura-comum)
-- [Configurações comuns do Airflow](#configurações-comuns-do-airflow)
-- [Serviços definidos](#serviços-definidos)
+- [Common Structure](#common-structure)
+- [Common Airflow Settings](#common-airflow-settings)
+- [Defined Services](#defined-services)
 - [Volumes](#volumes)
-- [Próximos passos](#próximos-passos)
+- [Next Steps](#next-steps)
 
 ---
 
-## Estrutura comum
+## Common Structure
 
-### Versão
+### Version
 
-Define a versão do arquivo de configuração do Docker Compose.
+Defines the version of the Docker Compose configuration file.
 
-[![Versão](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/01_Versao.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/01_Versao.png)
+[![Version](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/01_Versao.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/01_Versao.png)
 
 ### x-airflow-common
 
-Define uma âncora chamada `airflow-common`, usada para compartilhar configurações comuns entre os vários serviços do Airflow.
+Defines an anchor called `airflow-common`, used to share common configuration across the various Airflow services.
 
 [![x-airflow-common](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/02_X_Common.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/02_X_Common.png)
 
-## Configurações comuns do Airflow
+## Common Airflow Settings
 
-### Imagem e ambiente
+### Image and Environment
 
-Define a imagem Docker do Airflow e as variáveis de ambiente necessárias para sua configuração — incluindo conexão com o banco de dados, backend Celery, configurações de servidor web, e-mail, etc.
+Defines the Airflow Docker image and the environment variables needed for its configuration — including the database connection, Celery backend, web server settings, email, and more.
 
-[![Imagem e ambiente](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/03_Imagens_Ambiente.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/03_Imagens_Ambiente.png)
+[![Image and environment](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/03_Imagens_Ambiente.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/03_Imagens_Ambiente.png)
 
 ### Volumes
 
-Mapeia diretórios locais para os diretórios correspondentes dentro dos contêineres, garantindo que DAGs, logs, plugins e dados persistam entre reinicializações.
+Maps local directories to their corresponding directories inside the containers, ensuring that DAGs, logs, plugins, and data persist between restarts.
 
 [![Volumes](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/04_Volumes.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/04_Volumes.png)
 
-### Usuário e dependências
+### User and Dependencies
 
-Define o usuário que executará os contêineres e as dependências de serviços — Redis e PostgreSQL precisam estar saudáveis antes de iniciar os serviços do Airflow.
+Defines the user that will run the containers and the service dependencies — Redis and PostgreSQL need to be healthy before the Airflow services start.
 
-[![Usuário e dependências](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/05_Usuarios_Dependencias.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/05_Usuarios_Dependencias.png)
+[![User and dependencies](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/05_Usuarios_Dependencias.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/05_Usuarios_Dependencias.png)
 
-## Serviços definidos
+## Defined Services
 
-| # | Serviço | Descrição |
+| # | Service | Description |
 | --- | --- | --- |
-| 1 | **PostgreSQL** | Serviço de banco de dados, com as credenciais necessárias e um volume para persistir os dados. Inclui um healthcheck para verificar se o banco está pronto |
-| 2 | **Redis** | Expõe a porta 6379 e inclui um healthcheck para garantir que o serviço está funcionando corretamente |
-| 3 | **Airflow Webserver** | Servidor web do Airflow, usando a configuração comum (`airflow-common`), expondo a porta 8080 e com verificação de saúde |
-| 4 | **Airflow Scheduler** | Agendador responsável por orquestrar a execução dos DAGs |
-| 5 | **Airflow Worker** | Trabalhadores Celery responsáveis por executar as tarefas agendadas |
-| 6 | **Airflow Triggerer** | Responsável por disparar tarefas baseadas em eventos |
-| 7 | **Airflow Init** | Responsável por inicializar o banco de dados do Airflow e criar o usuário web inicial |
-| 8 | **Airflow CLI** | Serviço para executar comandos da linha de comando do Airflow |
-| 9 | **Flower** | Serviço de monitoramento do Celery |
+| 1 | **PostgreSQL** | Database service, with the necessary credentials and a volume to persist the data. Includes a healthcheck to verify the database is ready |
+| 2 | **Redis** | Exposes port 6379 and includes a healthcheck to ensure the service is working correctly |
+| 3 | **Airflow Webserver** | Airflow's web server, using the common configuration (`airflow-common`), exposing port 8080 and with a health check |
+| 4 | **Airflow Scheduler** | Scheduler responsible for orchestrating DAG execution |
+| 5 | **Airflow Worker** | Celery workers responsible for running the scheduled tasks |
+| 6 | **Airflow Triggerer** | Responsible for triggering event-based tasks |
+| 7 | **Airflow Init** | Responsible for initializing the Airflow database and creating the initial web user |
+| 8 | **Airflow CLI** | Service for running Airflow command-line commands |
+| 9 | **Flower** | Celery monitoring service |
 
 [![PostgreSQL](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/06_Postgres_SQL.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/06_Postgres_SQL.png)
 [![Redis](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/07_Redis.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/07_Redis.png)
@@ -74,17 +74,17 @@ Define o usuário que executará os contêineres e as dependências de serviços
 
 ## Volumes
 
-Define um volume Docker para persistir os dados do PostgreSQL.
+Defines a Docker volume to persist PostgreSQL's data.
 
-[![Volumes do PostgreSQL](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/15_Volumes.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/15_Volumes.png)
+[![PostgreSQL volumes](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/raw/main/img/15_Volumes.png)](https://github.com/joycequoos/Leitura_Docker_Compose_Airflow/blob/main/img/15_Volumes.png)
 
 ---
 
-Esse `docker-compose.yml` configura uma arquitetura completa para executar o Apache Airflow em um ambiente distribuído, com PostgreSQL, Redis e os vários serviços do Airflow trabalhando em conjunto.
+This `docker-compose.yml` configures a complete architecture for running Apache Airflow in a distributed environment, with PostgreSQL, Redis, and the various Airflow services working together.
 
-## Próximos passos
+## Next Steps
 
-- Testar a arquitetura localmente com `docker-compose up -d` e acompanhar os logs de cada serviço.
-- Ajustar variáveis de ambiente sensíveis (senhas, chaves) usando um arquivo `.env` em vez de deixá-las hardcoded no compose file.
-- Explorar o Flower (`localhost:5555`) para monitorar as filas de tarefas do Celery em tempo real.
-- Documentar como adicionar novos DAGs ao volume mapeado sem precisar reiniciar os contêineres.
+- Test the architecture locally with `docker-compose up -d` and monitor each service's logs.
+- Adjust sensitive environment variables (passwords, keys) using a `.env` file instead of leaving them hardcoded in the compose file.
+- Explore Flower (`localhost:5555`) to monitor Celery's task queues in real time.
+- Document how to add new DAGs to the mapped volume without needing to restart the containers.
